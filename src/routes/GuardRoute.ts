@@ -38,5 +38,21 @@ GuardRoute.post(
         return c.json({ message: `Guard with id ${data.id} already exists`})
     }
     const guard = await prisma.guard.create({ data })
+    c.status(201)
+    return c.json(guard)
+})
+
+GuardRoute.get("/all" , async (c: Context) => {
+    const guards = await prisma.guard.findMany()
+    return c.json(guards)
+})
+
+GuardRoute.get("/:id", async (c: Context) => {
+    const id = Number(c.req.param('id'))
+    const guard = await prisma.guard.findUnique({ where: { id }})
+    if(!guard){
+        c.status(400)
+        return c.json({ message: `guard with id ${id} does not exist`})
+    }
     return c.json(guard)
 })
