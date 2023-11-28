@@ -1,5 +1,6 @@
 import { Context, Hono } from "hono";
 import { PrismaClient } from "@prisma/client";
+import { invalidJsonRequestBodyFilter } from "./middleware/UniversalMiddleWare";
 
 export const StudentRoute = new Hono();
 const prisma = new PrismaClient();
@@ -8,17 +9,6 @@ type StudentData = {
     lrn: number,
     fn: string,
     ln: string
-}
-
-async function invalidJsonRequestBodyFilter(c: Context, next: Function){
-    try{
-        await c.req.json()
-        await next()
-    }
-    catch(err){
-        c.status(400)
-        return c.json({ message: 'RequestBody must be valid JSON'})
-    }
 }
 
 async function invalidStudentJsonFilter(c: Context, next: Function){
