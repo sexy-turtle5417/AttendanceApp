@@ -56,3 +56,57 @@ GuardRoute.get("/:id", async (c: Context) => {
     }
     return c.json(guard)
 })
+
+GuardRoute.put("/newid/:newid/id/:id", async (c: Context) => {
+    const newId = Number(c.req.param('newid'))
+    const id = Number(c.req.param('id'))
+    const existingGuard = await prisma.guard.findUnique({ where: { id }})
+    const existingId = await prisma.guard.findUnique({ where: { id: newId }})
+    if(existingId){
+        c.status(400)
+        return c.json({ message: `Guard with id ${newId} already exists`})
+    }
+    if(!existingGuard){
+        c.status(400)
+        return c.json({ message: `Guard with id ${id} does not exist`})
+    }
+    const updatedGuard = await prisma.guard.update({ data: { id: newId}, where: { id }})
+    c.status(200)
+    return c.json(updatedGuard)
+})
+
+GuardRoute.put("firstname/:fn/id/:id",async (c: Context) => {
+    const fn = c.req.param('fn')
+    const id = Number(c.req.param('id'))
+    const existingGuard = await prisma.guard.findUnique({ where: { id }})
+    if(!existingGuard){
+        c.status(400)
+        return c.json({ message: `Guard with id ${id} does not exist`})
+    }
+    const updatedGuard = await prisma.guard.update({ data: { fn }, where: { id }})
+    return c.json(updatedGuard)
+})
+
+GuardRoute.put("lastname/:ln/id/:id", async (c: Context) => {
+    const ln = c.req.param('ln')
+    const id = Number(c.req.param('id'))
+    const existingGuard = await prisma.guard.findUnique({ where: { id }})
+    if(!existingGuard){
+        c.status(400)
+        return c.json({ message: `Guard with id ${id} does not exist`})
+    }
+    const updatedGuard = await prisma.guard.update({ data: { ln }, where: { id }})
+    return c.json(updatedGuard)
+})
+
+GuardRoute.delete("/:id", async (c: Context) => {
+    const id = Number(c.req.param('id'))
+    const existingGuard = await prisma.guard.findUnique({ where: { id }})
+    if(!existingGuard){
+        c.status(400)
+        return c.json({ message: `Guard with id ${id} does not exist`})
+    }
+    return await prisma.guard.delete({ where: { id }}).then(() => {
+        return c.json({ message: `Guard with id ${id} successfully deleted`})
+    })
+})

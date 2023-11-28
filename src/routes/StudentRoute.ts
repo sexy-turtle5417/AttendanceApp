@@ -61,6 +61,11 @@ StudentRoute.get("/:lrn", async (c: Context) => {
 StudentRoute.put("/newlrn/:newlrn/lrn/:lrn", async (c: Context) => {
     const newlrn = Number(c.req.param('newlrn'))
     const lrn = Number(c.req.param('lrn'))
+    const existingLrn = await prisma.student.findUnique({ where: { lrn: newlrn}})
+    if(existingLrn){
+        c.status(400)
+        return c.json({ message: `Student with lrn ${newlrn} already exists`})
+    }
     const existingStudent = await prisma.student.findUnique({ where: { lrn }})
     if(!existingStudent){
         return c.json({ message: `Student with lrn ${lrn} does not exist`})
@@ -101,3 +106,4 @@ StudentRoute.delete("/:lrn", async (c: Context) => {
         return c.json({ message: `Student with lrn ${lrn} successfully deleted`})
     })
 })
+
