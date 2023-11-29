@@ -7,42 +7,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model guard {
-  id                                   Int           @id
-  fn                                   String        @db.VarChar(50)
-  ln                                   String        @db.VarChar(50)
-  student_in_student_in_guardToguard   student_in[]  @relation("student_in_guardToguard")
-  student_out_student_out_guardToguard student_out[] @relation("student_out_guardToguard")
+model Guard{
+  id String @id @default(uuid())
+  firstname String
+  middlename String?
+  lastname String
+  studentEntries StudentEntry[]
+  studentExits StudentExit[]
 }
 
-model student {
-  lrn                                    Int          @id
-  fn                                     String       @db.VarChar(50)
-  ln                                     String       @db.VarChar(50)
-  student_in_student_in_studentTostudent student_in[] @relation("student_in_studentTostudent")
+model GradeLevel{
+  level Int @id
+  name String
+  sections Section[]
 }
 
-model student_in {
-  id                                             Int           @id
-  student                                        Int
-  guard                                          Int
-  time_in                                        DateTime      @default(now()) @db.DateTime(0)
-  student_student_in_studentTostudent            student       @relation("student_in_studentTostudent", fields: [student], references: [lrn], onUpdate: Restrict, map: "student_in_ibfk_1")
-  guard_student_in_guardToguard                  guard         @relation("student_in_guardToguard", fields: [guard], references: [id], onUpdate: Restrict, map: "student_in_ibfk_2")
-  student_out_student_out_student_inTostudent_in student_out[] @relation("student_out_student_inTostudent_in")
-
-  @@index([guard], map: "guard")
-  @@index([student], map: "student")
+model Section{
+  id String @id @default(uuid())
+  name String
+  level Int
+  gradeLevel GradeLevel @relation(fields: [level], references: [level], onDelete: Cascade)
+  students Student[]
+}
+model Student{
+  lrn Int @id
+  firstname String
+  middlename String?
+  lastname String
+  sectionId String
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  studentEntries StudentEntry[]
 }
 
-model student_out {
-  id                                            Int        @id
-  student_in                                    Int
-  guard                                         Int
-  time_out                                      DateTime   @default(now()) @db.DateTime(0)
-  student_in_student_out_student_inTostudent_in student_in @relation("student_out_student_inTostudent_in", fields: [student_in], references: [id], onUpdate: Restrict, map: "student_out_ibfk_1")
-  guard_student_out_guardToguard                guard      @relation("student_out_guardToguard", fields: [guard], references: [id], onUpdate: Restrict, map: "student_out_ibfk_2")
+model StudentEntry{
+  id Int @id @default(autoincrement())
+  studentLrn Int
+  guardId String
+  timeIn DateTime @default(now())
+  student Student @relation(fields: [studentLrn], references: [lrn], onDelete: Cascade)
+  guard Guard @relation(fields: [guardId], references: [id], onDelete: Cascade)
+  studentExit StudentExit[]
+}
 
-  @@index([guard], map: "guard")
-  @@index([student_in], map: "student_in")
+model StudentExit{
+  id Int @id @default(autoincrement())
+  studentEntryId Int @unique
+  guardId String
+  timeOut DateTime @default(now())
+  studentEntry StudentEntry @relation(fields: [studentEntryId], references: [id], onDelete: Cascade)
+  guard Guard @relation(fields: [guardId], references: [id])
 }
