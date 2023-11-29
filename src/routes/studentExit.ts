@@ -21,3 +21,10 @@ studentExitRoute.post("/add", async (c: Context) => {
     const studentExit = await prisma.studentExit.create({ data })
     return c.json(studentExit)
 })
+
+studentExitRoute.delete("/delete/:id", async (c: Context) => {
+    const id = Number(c.req.param('id'))
+    return await prisma.studentExit.delete({ where: { id }}).then(() => {
+        return c.json({ message: `Record with id '${id}' has been successfully deleted`})
+    })
+})
