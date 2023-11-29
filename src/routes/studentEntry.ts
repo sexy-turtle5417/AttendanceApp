@@ -1,7 +1,7 @@
 import { Context, Hono } from "hono";
 import { PrismaClient } from "@prisma/client";
 
-export const prisma = new PrismaClient()
+const prisma = new PrismaClient()
 export const studentEntryRoute = new Hono()
 
 export type StudentEntryData = {
