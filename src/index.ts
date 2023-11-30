@@ -4,8 +4,18 @@ import { font } from "ascii-art"
 import { studentEntryRoute } from "./routes/studentEntry"
 import { studentExitRoute } from "./routes/studentExit"
 import { campusAttendanceRoute } from "./routes/campusAttendance"
+import { cors } from "hono/cors"
 
 const app = new Hono()
+
+app.use("/*", cors({
+    origin: ['http://localhost:5173'],
+    allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests'],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+    maxAge: 600,
+    credentials: true,
+}))
 
 app.route("/entry", studentEntryRoute)
 app.route("/exit", studentExitRoute)
