@@ -29,6 +29,7 @@ campusAttendanceRoute.get("/all", async (c: Context) => {
     LEFT JOIN studentexit
     ON studententry.id = studentexit.studentEntryId
     LEFT JOIN guard as guardExit
-    ON guardExit.id = studentexit.guardId`
+    ON guardExit.id = studentexit.guardId
+    ORDER BY timeEntered DESC`
     return c.json(records)
 })
