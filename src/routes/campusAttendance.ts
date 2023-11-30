@@ -5,7 +5,9 @@ export const campusAttendanceRoute = new Hono()
 const prisma = new PrismaClient()
 
 campusAttendanceRoute.get("/all", async (c: Context) => {
-    const records = await prisma.$queryRaw`SELECT 
+    const records = await prisma.$queryRaw`
+    SELECT 
+    studentEntry.id as "entryId",
     student.lrn as "lrn",
     gradelevel.name as "gradeLevel",
     section.name as "section",

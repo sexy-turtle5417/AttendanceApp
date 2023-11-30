@@ -29,8 +29,35 @@ studentExitRoute.post("/add", async (c: Context) => {
         });
         const studentEntryId = studentEntry.id
         const data = { studentEntryId, guardId }
-        const studentExit = await prisma.studentExit.create({ data })
-        return c.json(studentExit)
+        return await prisma.studentExit.create({ data }).then(async () => {
+            const result: any[] = await prisma.$queryRaw`
+            SELECT
+            studentEntry.id as "entryId",
+            student.lrn,
+            gradelevel.name as "gradeLevel",
+            section.name as "section",
+            concat(student.firstname, " ", student.lastname) as "fullname",
+            timeIn as "timeEntered",
+            concat(guardEntry.firstname, " ", guardEntry.lastname) as "entryCheckedBy",
+            timeOut as "timeExited",
+            concat(guardExit.firstname, " ", guardExit.lastname) as "exitCheckedBy"
+            FROM 
+            studententry
+            LEFT JOIN student
+            ON student.lrn = studententry.studentLrn
+            LEFT JOIN guard as guardEntry
+            ON guardEntry.id = studententry.guardId
+            LEFT JOIN section
+            ON student.sectionId = section.id
+            LEFT JOIN gradelevel
+            ON section.level = gradelevel.level
+            LEFT JOIN studentexit
+            ON studententry.id = studentexit.studentEntryId
+            LEFT JOIN guard as guardExit
+            ON guardExit.id = studentexit.guardId
+            WHERE studententry.id = ${studentEntryId};`
+            return c.json(result[0])
+        }); 
     }
     catch(err){
         c.status(400)
