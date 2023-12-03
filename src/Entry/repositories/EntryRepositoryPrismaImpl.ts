@@ -69,7 +69,7 @@ export class EntryRepositoryPrismaImpl implements EntryRepository{
             throw new EntryDoesNotExistsError(`Their are no entries with the lrn '${studentLrn}'`);
         }
         const lastestEntry = await this.prismaClient.entry.findFirstOrThrow({
-            where: { studentLrn }, select: { id: true }, orderBy: {
+            where: { studentLrn, studentExit: undefined }, select: { id: true }, orderBy: {
                 timeIn: "desc"
             }
         })

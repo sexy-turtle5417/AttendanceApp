@@ -9,6 +9,12 @@ export class ExitDoesNotExistsError extends Error{
     }
 }
 
+export class RecordAlreadyClosedError extends Error{
+    constructor(message: string){
+        super(message)
+    }
+}
+
 export interface ExitRepository{
     existsById(id: string): Promise<boolean>
     save(data: ExitData): Promise<any>

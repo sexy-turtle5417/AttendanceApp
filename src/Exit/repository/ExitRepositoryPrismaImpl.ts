@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { ExitData, ExitDoesNotExistsError, ExitRepository } from "./ExitRepository";
+import { ExitData, ExitDoesNotExistsError, ExitRepository, RecordAlreadyClosedError } from "./ExitRepository";
 
 export class ExitRepositoryPrismaImpl implements ExitRepository{
 
@@ -46,6 +46,8 @@ export class ExitRepositoryPrismaImpl implements ExitRepository{
             LEFT JOIN guard as guardOut
             ON guardOut.id = \`exit\`.guardid WHERE entry.id = ${data.studentEntryId};`
             return result[0];
+        }).catch((err) => {
+            throw new RecordAlreadyClosedError(`The record '${data.studentEntryId}' is already resolved`)
         })
     }
 
