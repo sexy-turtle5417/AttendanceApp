@@ -1,5 +1,5 @@
 import { EntryRepository } from "../../Entry/repositories/EntryRepository";
-import { ExitRepository } from "../repository/ExitRepository";
+import { ExitRepository, ExitResponseData } from "../repository/ExitRepository";
 import { ExitService, StudentExitData } from "./ExitService";
 
 export class ExitServiceImpl implements ExitService{
@@ -12,7 +12,7 @@ export class ExitServiceImpl implements ExitService{
         this.entryRepository = entryRepository
     }
 
-    async addRecord(exitData: StudentExitData): Promise<any> {
+    async addRecord(exitData: StudentExitData): Promise<ExitResponseData> {
         const { studentLrn, guardId } = exitData;
         const studentEntryId = await this.entryRepository.findIdOfLatestEntryByLrn(studentLrn)
         const exit = await this.exitRepository.save({ studentEntryId, guardId }) 

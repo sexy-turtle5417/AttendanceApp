@@ -3,7 +3,7 @@ import { EntryService } from "../services/EntryService"
 import { EntryData } from "../repositories/EntryRepository"
 import { invalidJsonRequestBodyFilter } from "../../middlewares/requestBodyMiddlewares"
 import { invaliddEntryDataFilter } from "../../middlewares/entryRouteMiddlewares"
-import { MessagingService } from "../services/MessagingService"
+import { MessagingService } from "../../services/MessagingService"
 
 export class EntryController{
 

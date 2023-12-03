@@ -10,7 +10,7 @@ import { ExitServiceImpl } from "./Exit/services/ExitServiceImpl";
 import { ExitRepositoryPrismaImpl } from "./Exit/repository/ExitRepositoryPrismaImpl";
 import { AttendanceController } from "./Attendance/routes/AttendanceController";
 import { AttendanceRepositoryPrismaImpl } from "./Attendance/repositories/AttendanceRepositoryPrismaImpl";
-import { MessagingServiceMockImpl } from "./Entry/services/MessagingServiceMockImpl";
+import { MessagingServiceMockImpl } from "./services/MessagingServiceMockImpl";
 
 const app = new Hono()
 
@@ -21,10 +21,13 @@ const entryController = new EntryController(
     new MessagingServiceMockImpl()
 )
 
-const exitController = new ExitController( new ExitServiceImpl(
-    new ExitRepositoryPrismaImpl( new PrismaClient()),
-    new EntryRepositoryPrismaImpl( new PrismaClient())
-))
+const exitController = new ExitController( 
+    new ExitServiceImpl(
+        new ExitRepositoryPrismaImpl( new PrismaClient()),
+        new EntryRepositoryPrismaImpl( new PrismaClient())
+        ),
+    new MessagingServiceMockImpl()
+)
 
 const attendanceController = new AttendanceController(
     new AttendanceRepositoryPrismaImpl( 
