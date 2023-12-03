@@ -9,6 +9,11 @@ export class EntryRepositoryPrismaImpl implements EntryRepository{
         this.prismaClient = prismaClient
     }
 
+    async count(): Promise<number> {
+        const numOfRecords = await this.prismaClient.entry.count()
+        return numOfRecords;
+    }
+
     async existsById(id: string): Promise<boolean> {
         const existingEntry = await this.prismaClient.entry.findUnique({
             where: { id }, select: { id: false }

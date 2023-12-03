@@ -1,18 +1,36 @@
 import { PrismaClient } from "@prisma/client";
-import { EntryResponseData } from "../../Entry/repositories/EntryRepository";
-import { AttendanceRepository } from "./AttendanceRepository";
+import { EntryRepository, EntryResponseData } from "../../Entry/repositories/EntryRepository";
+import { AttendanceRepository, ExceededNumberOfPagesError, PageInfo } from "./AttendanceRepository";
 
 export class AttendanceRepositoryPrismaImpl implements AttendanceRepository{
 
 
     private prismaClient: PrismaClient
+    private entryRepository: EntryRepository
 
-    constructor(prismaClient: PrismaClient){
+    constructor(entryRepository: EntryRepository,prismaClient: PrismaClient){
         this.prismaClient = prismaClient
+        this.entryRepository = entryRepository
     }
     
-    async findAllRecords(): Promise<EntryResponseData[]> {
-        const records: EntryResponseData[] = await this.prismaClient.$queryRaw`
+    async findRecords(pageNumber: number): Promise<any> {
+        const numberOfRecords = await this.entryRepository.count()
+        const limit = 20
+        const currentPage = pageNumber - 1
+        const offset = currentPage * limit
+        const pages = Math.ceil(numberOfRecords / limit )
+
+        if(pageNumber > pages){
+            throw new ExceededNumberOfPagesError(`You have exceeded the total pages`)
+        }
+
+        const pageInfo: PageInfo = {
+            itemsPerPage: limit,
+            pageNumber: currentPage + 1,
+            totalPages: pages
+        }
+
+        const records: any = await this.prismaClient.$queryRaw`
             SELECT 
                 entry.id,
                 student.lrn,
@@ -38,7 +56,10 @@ export class AttendanceRepositoryPrismaImpl implements AttendanceRepository{
             ON guardIn.id = entry.guardId
             LEFT JOIN guard as guardOut
             ON guardOut.id = \`exit\`.guardid
-            ORDER BY entry.timeIn DESC;`
-        return records 
+            ORDER BY entry.timeIn DESC LIMIT ${limit} OFFSET ${offset};`
+        return {
+            ...pageInfo,
+            content: records
+        }
     }
 }

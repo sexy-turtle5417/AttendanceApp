@@ -1,5 +1,5 @@
 import { Context, Hono } from "hono"
-import { AttendanceRepository } from "../repositories/AttendanceRepository"
+import { AttendanceRepository, ExceededNumberOfPagesError } from "../repositories/AttendanceRepository"
 
 export class AttendanceController{
 
@@ -12,9 +12,18 @@ export class AttendanceController{
 
     getRoute(): Hono {
 
-        this.hono.get("/all", async (c: Context) => {
-            const records =  await this.attendanceRepository.findAllRecords()
-            return  c.json(records)
+        this.hono.get("/records/:pagenumber", async (c: Context) => {
+            const pageNumber: number = Number(c.req.param('pagenumber'))
+            try{
+                const records =  await this.attendanceRepository.findRecords(pageNumber)
+                return  c.json(records)
+            }
+            catch(err){
+                if(err instanceof ExceededNumberOfPagesError){
+                    c.status(400)
+                    return c.json({ message: err.message})
+                }
+            }
         })
         
         return this.hono

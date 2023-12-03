@@ -25,7 +25,10 @@ const exitController = new ExitController( new ExitServiceImpl(
 ))
 
 const attendanceController = new AttendanceController(
-    new AttendanceRepositoryPrismaImpl( new PrismaClient() )
+    new AttendanceRepositoryPrismaImpl( 
+        new EntryRepositoryPrismaImpl( new PrismaClient() ),
+        new PrismaClient()
+    )
 )
 
 app.route("/entry", entryController.getRoute())

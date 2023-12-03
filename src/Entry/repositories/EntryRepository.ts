@@ -28,4 +28,5 @@ export interface EntryRepository{
     save(data: EntryData): Promise<EntryResponseData>
     deleteById(id: string): Promise<void>
     findIdOfLatestEntryByLrn(studentLrn: string): Promise<string>
+    count(): Promise<number>
 }
