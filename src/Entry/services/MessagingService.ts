@@ -1,3 +1,3 @@
 export interface MessagingService{
-    sendMessage(phoneNumber: number): Promise<void>
+    sendMessage(phoneNumber: string): Promise<void>
 }

@@ -23,7 +23,7 @@ export class EntryController{
         this.hono.post("/add", async (c: Context) => {
             const requestBody: EntryData = await c.req.json()
             const entry = await this.entryService.addRecord(requestBody).then(async (data) => {
-                this.messagingService.sendMessage(Number(data.phoneNumber))
+                this.messagingService.sendMessage(data.phoneNumber)
                 return data
             })
             return c.json(entry)
