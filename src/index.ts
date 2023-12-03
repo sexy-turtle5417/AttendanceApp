@@ -6,6 +6,8 @@ import { font } from "ascii-art";
 import { EntryServiceImpl } from "./Entry/services/EntryServiceImpl";
 import { EntryRepositoryPrismaImpl } from "./Entry/repositories/EntryRepositoryPrismaImpl";
 import { PrismaClient } from "@prisma/client";
+import { ExitServiceImpl } from "./Exit/services/ExitServiceImpl";
+import { ExitRepositoryPrismaImpl } from "./Exit/repository/ExitRepositoryPrismaImpl";
 
 const app = new Hono()
 
@@ -15,7 +17,10 @@ const entryController = new EntryController(new EntryServiceImpl(
     )
 ))
 
-const exitController = new ExitController()
+const exitController = new ExitController( new ExitServiceImpl(
+    new ExitRepositoryPrismaImpl( new PrismaClient()),
+    new EntryRepositoryPrismaImpl( new PrismaClient())
+))
 
 app.route("/entry", entryController.getRoute())
 app.route("/exit", exitController.getRoute())
