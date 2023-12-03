@@ -3,14 +3,17 @@ import { EntryService } from "../services/EntryService"
 import { EntryData } from "../repositories/EntryRepository"
 import { invalidJsonRequestBodyFilter } from "../../middlewares/requestBodyMiddlewares"
 import { invaliddEntryDataFilter } from "../../middlewares/entryRouteMiddlewares"
+import { MessagingService } from "../services/MessagingService"
 
 export class EntryController{
 
     private hono: Hono = new Hono()
     private entryService: EntryService
+    private messagingService: MessagingService
 
-    constructor(entryService: EntryService){
+    constructor(entryService: EntryService, messagingService: MessagingService){
         this.entryService = entryService
+        this.messagingService = messagingService
     }
 
     getRoute(): Hono {
@@ -19,7 +22,10 @@ export class EntryController{
 
         this.hono.post("/add", async (c: Context) => {
             const requestBody: EntryData = await c.req.json()
-            const entry = await this.entryService.addRecord(requestBody)
+            const entry = await this.entryService.addRecord(requestBody).then(async (data) => {
+                this.messagingService.sendMessage(Number(data.phoneNumber))
+                return data
+            })
             return c.json(entry)
         })
 
