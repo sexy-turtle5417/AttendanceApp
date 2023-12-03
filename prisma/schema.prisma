@@ -48,6 +48,7 @@ model Entry{
   id String @id @default(uuid())
   studentLrn String
   guardId String
+  timeIn DateTime @default(now())
   student Student @relation(fields: [studentLrn], references: [lrn])
   guard Guard @relation(fields: [guardId], references: [id])
   studentExit Exit[]
@@ -57,6 +58,7 @@ model Exit{
   id String @id @default(uuid())
   studentEntryId String @unique
   guardId String
+  timeOut DateTime @default(now())
   studentEntry Entry @relation(fields: [studentEntryId], references: [id])
   guard Guard @relation(fields: [guardId], references: [id])
 }
