@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { EntryController } from "./Entry/controllers/EntryController";
+import { ExitController } from "./Exit/controllers/ExitController";
 import { font } from "ascii-art";
 import { EntryServiceImpl } from "./Entry/services/EntryServiceImpl";
 import { EntryRepositoryPrismaImpl } from "./Entry/repositories/EntryRepositoryPrismaImpl";
@@ -14,7 +15,10 @@ const entryController = new EntryController(new EntryServiceImpl(
     )
 ))
 
+const exitController = new ExitController()
+
 app.route("/entry", entryController.getRoute())
+app.route("/exit", exitController.getRoute())
 
 serve(app, () => {
     font("Attendance App", "Doom").toPromise().then((title) => {
