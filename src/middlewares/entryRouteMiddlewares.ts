@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { EntryData } from "../../repositories/EntryRepository";
+import { EntryData } from "../Entry/repositories/EntryRepository";
 
 export async function invaliddEntryDataFilter(c: Context, next: Function){
     const requestBody: EntryData = await c.req.json()

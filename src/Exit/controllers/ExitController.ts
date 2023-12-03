@@ -1,5 +1,7 @@
 import { Context, Hono } from "hono"
 import { ExitService, StudentExitData } from "../services/ExitService"
+import { invalidJsonRequestBodyFilter } from "../../middlewares/requestBodyMiddlewares"
+import { invaliddEntryDataFilter } from "../../middlewares/entryRouteMiddlewares"
 
 export class ExitController{
     
@@ -11,6 +13,8 @@ export class ExitController{
     }
     
     getRoute(): Hono {
+
+        this.hono.use("/add", invalidJsonRequestBodyFilter, invaliddEntryDataFilter)
 
         this.hono.post("/add", async (c: Context) => {
             const requestBody: StudentExitData = await c.req.json()

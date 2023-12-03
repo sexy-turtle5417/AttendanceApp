@@ -2,7 +2,7 @@ import { Context, Hono } from "hono"
 import { EntryService } from "../services/EntryService"
 import { EntryData } from "../repositories/EntryRepository"
 import { invalidJsonRequestBodyFilter } from "../../middlewares/requestBodyMiddlewares"
-import { invaliddEntryDataFilter } from "./middlewares/entryRouteMiddlewares"
+import { invaliddEntryDataFilter } from "../../middlewares/entryRouteMiddlewares"
 
 export class EntryController{
 
