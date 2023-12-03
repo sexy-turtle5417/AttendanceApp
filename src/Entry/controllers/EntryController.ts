@@ -1,16 +1,24 @@
 import { Context, Hono } from "hono"
+import { EntryService } from "../services/EntryService"
+import { EntryData } from "../repositories/EntryRepository"
 
 export class EntryController{
 
     private hono: Hono = new Hono()
+    private entryService: EntryService
+
+    constructor(entryService: EntryService){
+        this.entryService = entryService
+    }
 
     getRoute(): Hono {
 
         this.hono.post("/add", async (c: Context) => {
-            return c.json({ message: 'Hello World'})
+            const requestBody: EntryData = await c.req.json()
+            const entry = await this.entryService.addRecord(requestBody)
+            return c.json(entry)
         })
 
         return this.hono
     }
-
 }
