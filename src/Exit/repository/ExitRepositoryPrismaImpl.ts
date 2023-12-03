@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { ExitData, ExitDoesNotExistsError, ExitRepository, RecordAlreadyClosedError } from "./ExitRepository";
+import { ExitData, ExitDoesNotExistsError, ExitRepository, ExitResponseData, RecordAlreadyClosedError } from "./ExitRepository";
 
 export class ExitRepositoryPrismaImpl implements ExitRepository{
 
@@ -17,9 +17,9 @@ export class ExitRepositoryPrismaImpl implements ExitRepository{
         return true
     }
 
-    async save(data: ExitData): Promise<any> {
+    async save(data: ExitData): Promise<ExitResponseData> {
         return await this.prismaClient.exit.create({ data }).then(async () => {
-            const result: any = await this.prismaClient.$queryRaw`
+            const result: ExitResponseData[] = await this.prismaClient.$queryRaw`
             SELECT 
                 entry.id,
                 student.lrn,

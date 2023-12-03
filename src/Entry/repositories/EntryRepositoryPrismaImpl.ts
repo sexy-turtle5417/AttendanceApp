@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { EntryData, EntryDoesNotExistsError, EntryRepository } from "./EntryRepository";
+import { EntryData, EntryDoesNotExistsError, EntryRepository, EntryResponseData } from "./EntryRepository";
 
 export class EntryRepositoryPrismaImpl implements EntryRepository{
 
@@ -25,10 +25,10 @@ export class EntryRepositoryPrismaImpl implements EntryRepository{
         return false
     }
 
-    async save(data: EntryData): Promise<any> {
+    async save(data: EntryData): Promise<EntryResponseData> {
         const entry = await this.prismaClient.entry.create({ data, select: { id: true } })
         const { id } = entry
-        const result: any = await this.prismaClient.$queryRaw`
+        const result: EntryResponseData[] = await this.prismaClient.$queryRaw`
             SELECT 
                 entry.id,
                 student.lrn,
