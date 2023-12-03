@@ -18,8 +18,35 @@ export class ExitRepositoryPrismaImpl implements ExitRepository{
     }
 
     async save(data: ExitData): Promise<any> {
-        const exit = await this.prismaClient.exit.create({ data })
-        return exit
+        return await this.prismaClient.exit.create({ data }).then(async () => {
+            const result: any = await this.prismaClient.$queryRaw`
+            SELECT 
+                entry.id,
+                student.lrn,
+                student.email,
+                student.phoneNumber,
+                CONCAT_WS(" ", student.firstname, NULLIF(student.middlename, ""), student.lastname) AS "fullname",
+                gradelevel.gradelevel AS "gradeLevel",
+                section.sectionName AS "sectionName",
+                entry.timeIn,
+                CONCAT(guardIn.firstname," ", guardIn.lastname) AS "entryCheckedBy",
+                \`exit\`.timeOut,
+                CONCAT(guardOut.firstname," ", guardOut.lastname) AS "exitCheckedBy"
+            FROM entry
+            LEFT JOIN student
+            ON student.lrn = entry.studentlrn
+            LEFT JOIN section
+            ON section.id = student.sectionId
+            LEFT JOIN gradeLevel
+            ON section.level = gradelevel.level
+            LEFT JOIN \`exit\`
+            ON entry.id = \`exit\`.studententryId
+            LEFT JOIN guard as guardIn
+            ON guardIn.id = entry.guardId
+            LEFT JOIN guard as guardOut
+            ON guardOut.id = \`exit\`.guardid WHERE entry.id = ${data.studentEntryId};`
+            return result[0];
+        })
     }
 
     async deleteById(id: string): Promise<void> {

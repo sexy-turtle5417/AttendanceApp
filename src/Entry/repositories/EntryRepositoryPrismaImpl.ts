@@ -26,8 +26,35 @@ export class EntryRepositoryPrismaImpl implements EntryRepository{
     }
 
     async save(data: EntryData): Promise<any> {
-        const entry = await this.prismaClient.entry.create({ data })
-        return entry
+        const entry = await this.prismaClient.entry.create({ data, select: { id: true } })
+        const { id } = entry
+        const result: any = await this.prismaClient.$queryRaw`
+            SELECT 
+                entry.id,
+                student.lrn,
+                student.email,
+                student.phoneNumber,
+                CONCAT_WS(" ", student.firstname, NULLIF(student.middlename, ""), student.lastname) AS "fullname",
+                gradelevel.gradelevel AS "gradeLevel",
+                section.sectionName AS "sectionName",
+                entry.timeIn,
+                CONCAT(guardIn.firstname," ", guardIn.lastname) AS "entryCheckedBy",
+                \`exit\`.timeOut,
+                CONCAT(guardOut.firstname," ", guardOut.lastname) AS "exitCheckedBy"
+            FROM entry
+            LEFT JOIN student
+            ON student.lrn = entry.studentlrn
+            LEFT JOIN section
+            ON section.id = student.sectionId
+            LEFT JOIN gradeLevel
+            ON section.level = gradelevel.level
+            LEFT JOIN \`exit\`
+            ON entry.id = \`exit\`.studententryId
+            LEFT JOIN guard as guardIn
+            ON guardIn.id = entry.guardId
+            LEFT JOIN guard as guardOut
+            ON guardOut.id = \`exit\`.guardid WHERE entry.id = ${id};`
+            return result[0]
     }
 
     async deleteById(id: string): Promise<void> {
@@ -42,7 +69,9 @@ export class EntryRepositoryPrismaImpl implements EntryRepository{
             throw new EntryDoesNotExistsError(`Their are no entries with the lrn '${studentLrn}'`);
         }
         const lastestEntry = await this.prismaClient.entry.findFirstOrThrow({
-            where: { studentLrn }, select: { id: true }
+            where: { studentLrn }, select: { id: true }, orderBy: {
+                timeIn: "desc"
+            }
         })
         return lastestEntry.id
     }
