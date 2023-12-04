@@ -16,6 +16,7 @@ import { RegistrationServiceImpl } from "./Guard/services/RegistrationServiceImp
 import { GuardRepositoryPrismaImpl } from "./Guard/repositories/GuardRepositoryPrismaImpl";
 import { AuthController } from "./Auth/controllers/AuthController";
 import { AuthServiceImpl } from "./Auth/services/AuthServiceImpl";
+import { GuardServiceImpl } from "./Guard/services/GuardServiceImpl";
 
 const app = new Hono()
 
@@ -44,6 +45,11 @@ const attendanceController = new AttendanceController(
 const guardController = new GuardController(
     new RegistrationServiceImpl(
         new GuardRepositoryPrismaImpl(new PrismaClient())
+    ),
+    new GuardServiceImpl(
+        new GuardRepositoryPrismaImpl(
+            new PrismaClient()
+        )
     )
 )
 
