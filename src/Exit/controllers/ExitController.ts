@@ -2,7 +2,7 @@ import { Context, Hono } from "hono"
 import { ExitService, StudentExitData } from "../services/ExitService"
 import { invalidJsonRequestBodyFilter } from "../../middlewares/requestBodyMiddlewares"
 import { MessagingService } from "../../services/MessagingService"
-import { jwtFilter } from "../../middlewares/entryRouteMiddlewares"
+import { invaliddEntryDataFilter, jwtFilter } from "../../middlewares/entryRouteMiddlewares"
 import { GuardEntryData } from "../../Entry/repositories/EntryRepository"
 import { ExitData } from "../repository/ExitRepository"
 import { Payload } from "../../Auth/services/AuthService"
@@ -21,6 +21,7 @@ export class ExitController{
     getRoute(): Hono {
 
         this.hono.use("/add", invalidJsonRequestBodyFilter)
+        this.hono.use("/add", invaliddEntryDataFilter)
         this.hono.use("/add", jwtFilter)
 
         this.hono.post("/add", async (c: Context) => {

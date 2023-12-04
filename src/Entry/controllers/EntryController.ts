@@ -20,6 +20,7 @@ export class EntryController{
     getRoute(): Hono {
 
         this.hono.use("/add", invalidJsonRequestBodyFilter)
+        this.hono.use("/add", invaliddEntryDataFilter)
         this.hono.use("/add", jwtFilter)
 
         this.hono.post("/add", async (c: Context) => {

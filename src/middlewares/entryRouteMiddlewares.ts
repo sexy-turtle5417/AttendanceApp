@@ -9,10 +9,6 @@ export async function invaliddEntryDataFilter(c: Context, next: Function){
         c.status(400)
         return c.json({ message: 'studentLrn is a required field' })
     }
-    if(!requestBody.guardId){
-        c.status(400)
-        return c.json({ message: 'guardId is a required field'})
-    }
     await next()
 }
 
