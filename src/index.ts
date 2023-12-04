@@ -17,6 +17,7 @@ import { GuardRepositoryPrismaImpl } from "./Guard/repositories/GuardRepositoryP
 import { AuthController } from "./Auth/controllers/AuthController";
 import { AuthServiceImpl } from "./Auth/services/AuthServiceImpl";
 import { GuardServiceImpl } from "./Guard/services/GuardServiceImpl";
+import { cors } from "hono/cors"
 
 const app = new Hono()
 
@@ -64,6 +65,15 @@ app.route("/exit", exitController.getRoute())
 app.route("/attendance", attendanceController.getRoute())
 app.route("/guard", guardController.getRoute())
 app.route("/auth", authController.getRoute())
+
+app.use("/*", cors({
+    origin: 'http://localhost:5173',
+    allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests', 'Authorization'],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+    maxAge: 600,
+    credentials: true,
+}))
 
 serve(app, () => {
     font("Attendance App", "Doom").toPromise().then((title) => {
