@@ -3,6 +3,10 @@ export type EntryData = {
     guardId: string
 }
 
+export type GuardEntryData = {
+    studentLrn: string
+}
+
 export type EntryResponseData = {
     id: string,
     lrn: string,
