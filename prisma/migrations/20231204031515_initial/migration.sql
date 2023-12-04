@@ -66,19 +66,19 @@ CREATE TABLE `Exit` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Section` ADD CONSTRAINT `Section_level_fkey` FOREIGN KEY (`level`) REFERENCES `GradeLevel`(`level`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Section` ADD CONSTRAINT `Section_level_fkey` FOREIGN KEY (`level`) REFERENCES `GradeLevel`(`level`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Student` ADD CONSTRAINT `Student_sectionId_fkey` FOREIGN KEY (`sectionId`) REFERENCES `Section`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Student` ADD CONSTRAINT `Student_sectionId_fkey` FOREIGN KEY (`sectionId`) REFERENCES `Section`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Entry` ADD CONSTRAINT `Entry_studentLrn_fkey` FOREIGN KEY (`studentLrn`) REFERENCES `Student`(`lrn`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Entry` ADD CONSTRAINT `Entry_guardId_fkey` FOREIGN KEY (`guardId`) REFERENCES `Guard`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Entry` ADD CONSTRAINT `Entry_guardId_fkey` FOREIGN KEY (`guardId`) REFERENCES `Guard`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Exit` ADD CONSTRAINT `Exit_studentEntryId_fkey` FOREIGN KEY (`studentEntryId`) REFERENCES `Entry`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Exit` ADD CONSTRAINT `Exit_guardId_fkey` FOREIGN KEY (`guardId`) REFERENCES `Guard`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Exit` ADD CONSTRAINT `Exit_guardId_fkey` FOREIGN KEY (`guardId`) REFERENCES `Guard`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
