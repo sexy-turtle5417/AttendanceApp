@@ -21,12 +21,10 @@ export class AuthController{
 
         this.hono.post("/refresh", async (c: Context) => {
             const refreshToken: string = String(c.req.header('RefreshToken'))
-            const token = refreshToken
-            const tokens = await this.authService.refresh(token)
+            const token = refreshToken.split(" ")
+            const tokens = await this.authService.refresh(token[1])
             return c.json(tokens)
         })
-
-
         return this.hono
     }
 
