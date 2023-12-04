@@ -28,6 +28,7 @@ export class GuardController{
 
         this.hono.get("/details", async (c: Context) => {
             const payload: Payload = c.get('payload')
+            console.log(payload)
             const { id } = payload
             const guard = await this.guardService.findGuardById(id)
             return c.json(guard)

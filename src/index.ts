@@ -60,20 +60,22 @@ const authController = new AuthController(
     )
 )
 
+app.use("/*", cors({
+    origin: 'http://localhost:5173',
+    allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests', 'Authorization', 'RefreshToken', 'Content-Type'],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+    maxAge: 600,
+    credentials: true,
+}))
+
 app.route("/entry", entryController.getRoute())
 app.route("/exit", exitController.getRoute())
 app.route("/attendance", attendanceController.getRoute())
 app.route("/guard", guardController.getRoute())
 app.route("/auth", authController.getRoute())
 
-app.use("/*", cors({
-    origin: 'http://localhost:5173',
-    allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests', 'Authorization'],
-    allowMethods: ['POST', 'GET', 'OPTIONS'],
-    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
-    maxAge: 600,
-    credentials: true,
-}))
+
 
 serve(app, () => {
     font("Attendance App", "Doom").toPromise().then((title) => {
