@@ -49,6 +49,7 @@ CREATE TABLE `Entry` (
     `id` VARCHAR(191) NOT NULL,
     `studentLrn` VARCHAR(191) NOT NULL,
     `guardId` VARCHAR(191) NOT NULL,
+    `timeIn` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -58,6 +59,7 @@ CREATE TABLE `Exit` (
     `id` VARCHAR(191) NOT NULL,
     `studentEntryId` VARCHAR(191) NOT NULL,
     `guardId` VARCHAR(191) NOT NULL,
+    `timeOut` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `Exit_studentEntryId_key`(`studentEntryId`),
     PRIMARY KEY (`id`)

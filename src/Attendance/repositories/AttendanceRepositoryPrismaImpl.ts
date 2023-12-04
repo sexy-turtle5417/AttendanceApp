@@ -32,31 +32,31 @@ export class AttendanceRepositoryPrismaImpl implements AttendanceRepository{
 
         const records: any = await this.prismaClient.$queryRaw`
             SELECT 
-                entry.id,
-                student.lrn,
-                student.email,
-                student.phoneNumber,
-                CONCAT_WS(" ", student.firstname, NULLIF(student.middlename, ""), student.lastname) AS "fullname",
-                gradelevel.gradelevel AS "gradeLevel",
-                section.sectionName AS "sectionName",
-                entry.timeIn,
+                Entry.id,
+                Student.lrn,
+                Student.email,
+                Student.phoneNumber,
+                CONCAT_WS(" ", Student.firstname, NULLIF(Student.middlename, ""), Student.lastname) AS "fullname",
+                GradeLevel.gradeLevel AS "gradeLevel",
+                Section.sectionName AS "sectionName",
+                Entry.timeIn,
                 CONCAT(guardIn.firstname," ", guardIn.lastname) AS "entryCheckedBy",
-                \`exit\`.timeOut,
+                \`Exit\`.timeOut,
                 CONCAT(guardOut.firstname," ", guardOut.lastname) AS "exitCheckedBy"
-            FROM entry
-            LEFT JOIN student
-            ON student.lrn = entry.studentlrn
-            LEFT JOIN section
-            ON section.id = student.sectionId
-            LEFT JOIN gradeLevel
-            ON section.level = gradelevel.level
-            LEFT JOIN \`exit\`
-            ON entry.id = \`exit\`.studententryId
-            LEFT JOIN guard as guardIn
-            ON guardIn.id = entry.guardId
-            LEFT JOIN guard as guardOut
-            ON guardOut.id = \`exit\`.guardid
-            ORDER BY entry.timeIn DESC LIMIT ${limit} OFFSET ${offset};`
+            FROM Entry
+            LEFT JOIN Student
+            ON Student.lrn = Entry.studentlrn
+            LEFT JOIN Section
+            ON Section.id = Student.sectionId
+            LEFT JOIN GradeLevel
+            ON Section.level = GradeLevel.level
+            LEFT JOIN \`Exit\`
+            ON Entry.id = \`Exit\`.studententryId
+            LEFT JOIN Guard as guardIn
+            ON guardIn.id = Entry.guardId
+            LEFT JOIN Guard as guardOut
+            ON guardOut.id = \`Exit\`.guardid
+            ORDER BY Entry.timeIn DESC LIMIT ${limit} OFFSET ${offset};`
         return {
             ...pageInfo,
             content: records
