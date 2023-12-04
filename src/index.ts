@@ -14,6 +14,8 @@ import { MessagingServiceMockImpl } from "./services/MessagingServiceMockImpl";
 import { GuardController } from "./Guard/controllers/GuardController";
 import { RegistrationServiceImpl } from "./Guard/services/RegistrationServiceImpl";
 import { GuardRepositoryPrismaImpl } from "./Guard/repositories/GuardRepositoryPrismaImpl";
+import { AuthController } from "./Auth/controllers/AuthController";
+import { AuthServiceImpl } from "./Auth/services/AuthServiceImpl";
 
 const app = new Hono()
 
@@ -45,10 +47,17 @@ const guardController = new GuardController(
     )
 )
 
+const authController = new AuthController(
+    new AuthServiceImpl(
+        new GuardRepositoryPrismaImpl(new PrismaClient())
+    )
+)
+
 app.route("/entry", entryController.getRoute())
 app.route("/exit", exitController.getRoute())
 app.route("/attendance", attendanceController.getRoute())
 app.route("/guard", guardController.getRoute())
+app.route("/auth", authController.getRoute())
 
 serve(app, () => {
     font("Attendance App", "Doom").toPromise().then((title) => {

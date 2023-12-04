@@ -27,6 +27,7 @@ export interface GuardRepository{
     existsByEmail(email: string): Promise<boolean>
     findById(id: string): Promise<GuardPublicInfo>
     fingByEmail(email: string): Promise<GuardPublicInfo>
+    getPasswordByEmail(email: string): Promise<string>
     save(data: GuardData): Promise<Guard>
     deleteById(id: string): Promise<void>
 }

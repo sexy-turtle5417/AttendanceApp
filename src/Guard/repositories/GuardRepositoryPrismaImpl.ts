@@ -10,6 +10,16 @@ export class GuardRepositoryPrismaImpl implements GuardRepository{
         this.prismaClient = prismaClient
     }
 
+
+    async getPasswordByEmail(email: string): Promise<string> {
+        if(!await this.existsByEmail(email)){
+            throw new GuardDoesNotExistsError(`Guard with email ${email} dose not exists`)
+        }
+        const { password } = await this.prismaClient.guard.findUniqueOrThrow({ where: { email },
+        select: { password: true }})
+        return password
+    }
+
     async findById(id: string): Promise<GuardPublicInfo> {
         if(! await this.existsById(id)){
             throw new GuardDoesNotExistsError(`Guard with id ${id} does not exists`)
@@ -58,7 +68,7 @@ export class GuardRepositoryPrismaImpl implements GuardRepository{
             select: { id: true }
         })
         if(!existingGuard) return false
-        return false
+        return true
     }
 
     async save(data: GuardData): Promise<Guard> {
