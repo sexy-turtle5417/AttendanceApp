@@ -1,8 +1,11 @@
 import { Context, Hono } from "hono"
 import { ExitService, StudentExitData } from "../services/ExitService"
 import { invalidJsonRequestBodyFilter } from "../../middlewares/requestBodyMiddlewares"
-import { invaliddEntryDataFilter } from "../../middlewares/entryRouteMiddlewares"
 import { MessagingService } from "../../services/MessagingService"
+import { jwtFilter } from "../../middlewares/entryRouteMiddlewares"
+import { GuardEntryData } from "../../Entry/repositories/EntryRepository"
+import { ExitData } from "../repository/ExitRepository"
+import { Payload } from "../../Auth/services/AuthService"
 
 export class ExitController{
     
@@ -17,11 +20,18 @@ export class ExitController{
     
     getRoute(): Hono {
 
-        this.hono.use("/add", invalidJsonRequestBodyFilter, invaliddEntryDataFilter)
+        this.hono.use("/add", invalidJsonRequestBodyFilter)
+        this.hono.use("/add", jwtFilter)
 
         this.hono.post("/add", async (c: Context) => {
-            const requestBody: StudentExitData = await c.req.json()
-            const exit = await this.exitService.addRecord(requestBody).then(async (data) => {
+            const requestBody: GuardEntryData = await c.req.json()
+            const payload: Payload = c.get('payload')
+            const { id } = payload
+            const exitData: StudentExitData = {
+                ...requestBody,
+                guardId: id
+            }
+            const exit = await this.exitService.addRecord(exitData).then(async (data) => {
                 this.messagingService.sendMessage(data.phoneNumber)
                 return data
             })
