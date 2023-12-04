@@ -11,6 +11,9 @@ import { ExitRepositoryPrismaImpl } from "./Exit/repository/ExitRepositoryPrisma
 import { AttendanceController } from "./Attendance/routes/AttendanceController";
 import { AttendanceRepositoryPrismaImpl } from "./Attendance/repositories/AttendanceRepositoryPrismaImpl";
 import { MessagingServiceMockImpl } from "./services/MessagingServiceMockImpl";
+import { GuardController } from "./Guard/controllers/GuardController";
+import { RegistrationServiceImpl } from "./Guard/services/RegistrationServiceImpl";
+import { GuardRepositoryPrismaImpl } from "./Guard/repositories/GuardRepositoryPrismaImpl";
 
 const app = new Hono()
 
@@ -36,9 +39,16 @@ const attendanceController = new AttendanceController(
     )
 )
 
+const guardController = new GuardController(
+    new RegistrationServiceImpl(
+        new GuardRepositoryPrismaImpl(new PrismaClient())
+    )
+)
+
 app.route("/entry", entryController.getRoute())
 app.route("/exit", exitController.getRoute())
 app.route("/attendance", attendanceController.getRoute())
+app.route("/guard", guardController.getRoute())
 
 serve(app, () => {
     font("Attendance App", "Doom").toPromise().then((title) => {

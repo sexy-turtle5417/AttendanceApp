@@ -1,8 +1,6 @@
 import { GuardData } from "../repositories/GuardRepository";
 
 export type RegistrationResponse = {
-    id: string,
-    email: string,
     accessToken: string,
     refreshToken: string
 }
