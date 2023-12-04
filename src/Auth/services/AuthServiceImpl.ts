@@ -1,9 +1,10 @@
 import { GuardRepository } from "../../Guard/repositories/GuardRepository";
-import { AuthData, AuthResponse, AuthService, UnAuthorizedError } from "./AuthService";
+import { AuthData, AuthResponse, AuthService, Payload, UnAuthorizedError } from "./AuthService";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { jwtSecretKey } from "../../Guard/services/RegistrationServiceImpl";
 import { refreshTokenSecretKey } from "../../Guard/services/RegistrationServiceImpl";
+import { verify } from "jsonwebtoken";
 
 export class AuthServiceImpl implements AuthService{
 
@@ -30,7 +31,12 @@ export class AuthServiceImpl implements AuthService{
     }
     
     async refresh(refreshToken: string): Promise<AuthResponse> {
-        throw new Error("Method not implemented.");
+        const payload = verify(refreshToken, refreshTokenSecretKey)
+        const accessToken = sign(payload, jwtSecretKey)
+        const newRefreshToken = sign(payload, refreshTokenSecretKey)
+        return {
+            accessToken,
+            refreshToken: newRefreshToken
+        }
     }
-    
 }

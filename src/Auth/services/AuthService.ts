@@ -8,6 +8,11 @@ export type AuthData = {
     password: string
 }
 
+export type Payload = {
+    id: string,
+    email: string
+}
+
 export class UnAuthorizedError extends Error{
     constructor(message: string){
         super(message)
